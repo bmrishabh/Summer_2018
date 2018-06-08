@@ -3,10 +3,9 @@ start = time.time() # getting start time
 import numpy as np # for mean, std, array, repeats, multinomial
 import pandas as pd # to create data frame and write in excel
 from scipy import stats # for shannon entropy
-import itertools # to concatenate lists inside a list
 
-gens = 20 # No. of generations
-reps = 5 # No. of replicates
+gens = 200 # No. of generations
+reps = 50 # No. of replicates
 popsize = 100 # No. of individuals in a population (fixed)
 
 # creating arrays of 'gens' rows and 'reps' columns
@@ -56,10 +55,8 @@ for r in range(reps): # loop for reps
         ynum = np.random.multinomial(popsize, proby)
 
         # Getting new xlist and ylist using xnum and ynum
-        ## np.nonzero(xnum) gives index of all nonzero elements in xnum
-        ### itertools.chain.from_iterable() concatenates all the lists inside a list
-        xlist = np.array(list(itertools.chain.from_iterable([list(np.repeat(xlist[i],xnum[i])) for i in np.nonzero(xnum)])))
-        ylist = np.array(list(itertools.chain.from_iterable([list(np.repeat(ylist[i],ynum[i])) for i in np.nonzero(ynum)])))
+        xlist = np.repeat(xlist,xnum)
+        ylist = np.repeat(ylist,ynum)
 
     # Finding 0 in entropy array, getting its index, which is the gen of fixation
     ## If pop is not fixed then time to fixation is kept as gens+1
