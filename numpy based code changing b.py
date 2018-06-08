@@ -5,8 +5,8 @@ import pandas as pd # to create data frame and write in excel
 from scipy import stats # for shannon entropy
 import itertools # to concatenate lists inside a list
 
-gens = 20 # No. of generations
-reps = 2 # No. of replicates
+gens = 200 # No. of generations
+reps = 20 # No. of replicates
 popsize = 100 # No. of individuals in a population (fixed)
 brange = np.arange(0, 1.05, 0.05) # b from 0 to 1.05 with steps 0.05
 
@@ -51,12 +51,9 @@ for i in range(len(brange)): # loop for changing b
             xnum = np.random.multinomial(popsize, probx)
             ynum = np.random.multinomial(popsize, proby)
 
-            # Getting new xlist and ylist using xnum and ynum
-            ## np.nonzero(xnum) gives index of all nonzero elements in xnum
-            ### itertools.chain.from_iterable() concatenates all the lists inside a list
-            xlist = np.array(list(itertools.chain.from_iterable([list(np.repeat(xlist[i],xnum[i])) for i in np.nonzero(xnum)])))
-            ylist = np.array(list(itertools.chain.from_iterable([list(np.repeat(ylist[i],ynum[i])) for i in np.nonzero(ynum)])))
-
+            # Getting new xlist and ylist using xnum and ynum            
+            xlist = np.repeat(xlist,xnum)
+            ylist = np.repeat(ylist,ynum)
         # Finding 0 in entropy array, getting its index, which is the gen of fixation
         ## If pop is not fixed then time to fixation is kept as gens+1
         if 0 in Sx[:,r]:
