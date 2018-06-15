@@ -19,9 +19,11 @@ for i in range(len(brange)): # loop for changing b
     Sx, Sy= np.array([np.zeros([gens, reps]) for i in range(2)])
     
     for r in range(reps): # loop for reps
-        xlist = np.repeat(np.arange(1,11,1), 10) # initial pop x
-        ylist = np.repeat(np.arange(1,11,1), 10) # initial pop y
-
+        prob = stats.norm.cdf(np.arange(1,11)+0.5, loc = 5.5, scale = 1.83)-\
+               stats.norm.cdf(np.arange(1,11)-0.5, loc = 5.5, scale = 1.83)
+        prob = prob/sum(prob)
+        xlist = np.random.choice(np.arange(1,11), size = 100, p = prob) # initial pop x in normal dist
+        ylist = np.random.choice(np.arange(1,11), size = 100, p = prob) # initial pop y in normal dist
         for g in range(gens): # loop for generations
             a = 1 # a=intrinsic fitness coef
 
