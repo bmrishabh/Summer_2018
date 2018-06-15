@@ -24,6 +24,7 @@ for i in range(len(brange)): # loop for changing b
         prob = prob/sum(prob)
         xlist = np.random.choice(np.arange(1,11), size = 100, p = prob) # initial pop x in normal dist
         ylist = np.random.choice(np.arange(1,11), size = 100, p = prob) # initial pop y in normal dist
+
         for g in range(gens): # loop for generations
             a = 1 # a=intrinsic fitness coef
 
