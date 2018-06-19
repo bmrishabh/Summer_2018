@@ -40,12 +40,12 @@ for i in range(len(brange)): # loop for changing b
 
             # stats.entropy(prob list) gives shannon entropy
             ## set(fecx) gives all the elements in fecx only ones
-            if sum(list(set(fecx))) != 0:
-                Sx[g,r] = stats.entropy(np.array(list(set(fecx)))/max(1., sum(list(set(fecx)))))
+            if sum(np.unique(xlist, return_counts = True)[1]) != 0:
+                Sx[g,r] = stats.entropy(np.unique(xlist, return_counts = True)[1])
             else:
                 Sx[g,r] = 0
-            if sum(list(set(fecy))) != 0:
-                Sy[g,r] = stats.entropy(np.array(list(set(fecy)))/max(1., sum(list(set(fecy)))))
+            if sum(np.unique(ylist, return_counts = True)[1]) != 0:
+                Sy[g,r] = stats.entropy(np.unique(ylist, return_counts = True)[1])
             else:
                 Sy[g,r] = 0
 
@@ -60,11 +60,11 @@ for i in range(len(brange)): # loop for changing b
         # Finding 0 in entropy array, getting its index, which is the gen of fixation
         ## If pop is not fixed then time to fixation is kept as gens+1
         if 0 in Sx[:,r]:
-            timex[i,r] = list(Sx[:,r]).index(0) + 1 # +1 because indexing starts from 0
+            timex[i,r] = np.where(Sx[:,r] == 0)[0][0] + 1 # +1 because indexing starts from 0
         else:
             timex[i,r] = gens+1
         if 0 in Sy[:,r]:
-            timey[i,r] = list(Sy[:,r]).index(0) + 1
+            timey[i,r] = np.where(Sy[:,r] == 0)[0][0] + 1
         else:
             timey[i,r] = gens+1
     print(b)
