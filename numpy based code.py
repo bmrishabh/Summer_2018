@@ -64,13 +64,13 @@ for r in range(reps): # loop for reps
     # Finding 0 in entropy array, getting its index, which is the gen of fixation
     ## If pop is not fixed then time to fixation is kept as gens+1
     if 0 in Sx[:,r]:
-        timex[i,r] = np.where(Sx[:,r] == 0)[0][0] + 1 # +1 because indexing starts from 0
+        timex[r] = np.where(Sx[:,r] == 0)[0][0] + 1 # +1 because indexing starts from 0
     else:
-        timex[i,r] = gens+1
+        timex[r] = gens+1
     if 0 in Sy[:,r]:
-        timey[i,r] = np.where(Sy[:,r] == 0)[0][0] + 1
+        timey[r] = np.where(Sy[:,r] == 0)[0][0] + 1
     else:
-        timey[i,r] = gens+1
+        timey[r] = gens+1
     print(r)
 
 # d is a dictionary where all the final averages and std are stored
