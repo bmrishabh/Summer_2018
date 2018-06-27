@@ -30,7 +30,7 @@ def norm(p):
 
     '''Normalizes the given array.'''
 
-    return (p / sum(p))
+    return (p / np.sum(p))
 
 @jit
 def shan(p):
@@ -40,7 +40,7 @@ def shan(p):
 
     return scipy.stats.entropy(p)
 
-def ftau(p, maxgen):
+def ftau(p):
 
     '''Finds fixation time,
     returns generation when shannon index
@@ -52,29 +52,29 @@ def ftau(p, maxgen):
         return np.argmin(p > 0)
 
 @jit
-def efec(naj, nbj, a, b, maxpop):
+def efec(naj, nbj, a, b):
 
     '''Evaluates effective fecundity array from interactions.
     Following is equivalent to f(x) = a(c1*x + c0) + b(c1*y + c0)'''
     
-    efa = ( a*f(pa0) + b*np.average(f(pb0), weights=nbj) ).clip(0) * naj
-    efb = ( a*f(pb0) + b*np.average(f(pa0), weights=naj) ).clip(0) * nbj
+    efa = ( a*np.average(f(x,y), axis=1, weights=norm(naj)) + b*np.average(f(y,x), axis=0, weights=norm(nbj)) ).clip(0) * naj
+    efb = ( a*np.average(f(y,x), axis=0, weights=norm(nbj)) + b*np.average(f(x,y), axis=1, weights=norm(naj)) ).clip(0) * nbj
     return efa/maxpop, efb/maxpop
 
 @jit
-def grow(naj, nbj, a, b, maxpop):
+def grow(naj, nbj, a, b):
 
     '''Draws offspring population sample.'''
 
-    efa, efb = efec(naj, nbj, a, b, maxpop)
+    efa, efb = efec(naj, nbj, a, b)
     return np.random.multinomial(maxpop, pvals=norm(efa)), np.random.multinomial(maxpop, pvals=norm(efb))
 
 @jit
-def gaug(naj, nbj, a, b, maxpop):
+def gaug(naj, nbj, a, b):
 
     '''Calculates required population properties.'''
 
-    efa, efb = efec(naj, nbj, a, b, maxpop)
+    efa, efb = efec(naj, nbj, a, b)
     eopa, eopb = np.average(pa0, weights=naj), np.average(pb0, weights=nbj)
     eofa, eofb = np.average(efa, weights=naj), np.average(efb, weights=nbj)
     sopa, sopb = shan(naj), shan(nbj)
@@ -141,7 +141,7 @@ def fec1(a, b):
     '''Plots intrinsic fecundity vs phenotypes.'''
 
     plt.figure(figsize=(12,8))
-    plt.plot(pa0, a*f(pa0), label='Intrinsic')
+    plt.plot(pa0, np.average(f(x,y), axis=1), label='Intrinsic')
     plt.xlabel('Phenotypes')
     plt.ylabel('Intrinsic Fecundity')
     plt.legend()
@@ -149,13 +149,13 @@ def fec1(a, b):
     plt.savefig('plots/b{}_fec1.png'.format(np.abs(b)))
     plt.close()
 
-def fec2(b):
+def fec2(a, b):
 
     '''Plots interaction fecundity vs phenotypes.'''
 
     plt.figure(figsize=(12,8))
-    plt.plot(pa0,  b*f(pa0), label='+ve b')
-    plt.plot(pa0, -b*f(pa0), label='-ve b')
+    plt.plot(pa0,+b*np.average(f(x,y), axis=0), label='+ve b')
+    plt.plot(pa0,-b*np.average(f(x,y), axis=0), label='-ve b')
     plt.xlabel('Phenotypes')
     plt.ylabel('Interaction Fecundity')
     plt.legend()
@@ -168,9 +168,9 @@ def fec3(a, b):
     '''Plots composite fecundity vs phenotypes.'''
 
     plt.figure(figsize=(12,8))
-    plt.plot(pa0, a*f(pa0) + b*f(pa0), label='+ve b')
-    plt.plot(pa0, a*f(pa0), label='nil b')
-    plt.plot(pa0, a*f(pa0) - b*f(pa0), label='-ve b')
+    plt.plot(pa0,np.average(f(x,y), axis=1)+b*np.average(f(x,y), axis=0), label='+ve b')
+    plt.plot(pa0,np.average(f(x,y), axis=1), label='nil b')
+    plt.plot(pa0,np.average(f(x,y), axis=1)-b*np.average(f(x,y), axis=0), label='-ve b')
     plt.xlabel('Phenotypes')
     plt.ylabel('Composite Fecundity')
     plt.legend()
