@@ -23,7 +23,18 @@ df = np.zeros((maxrep,maxgen+1,6)) #array to store sample moments
 ft = np.zeros((maxrep,2))          #array to store fixation time
 
 for r in range(maxrep):    
-    gc.collect()    
+    gc.collect()
+    
+    num = np.random.choice(pa0, size=100, p=prb)
+    na0 = np.unique(num, return_counts=True)[1]
+    for s in sorted(set(pa0) - set(num)):
+        na0 = np.insert(na0, s-1, 0)
+    
+    num = np.random.choice(pb0, size=100, p=prb)
+    nb0 = np.unique(num, return_counts=True)[1]
+    for s in sorted(set(pb0) - set(num)):
+        nb0 = np.insert(nb0, s-1, 0)
+    
     naj, nbj = na0, nb0
     df[r,0] = np.array(gaug(naj, nbj,a, b))
 

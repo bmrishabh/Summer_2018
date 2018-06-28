@@ -7,13 +7,17 @@
 
 import numpy as np
 from numba import jit
+from scipy import stats as ss
 
 maxgen = 200 #number of generations
 maxpop = 100 #number of individuals
 maxrep = 50  #number of replicate runs
 
 pa0, pb0 = np.arange(1,11), np.arange(1,11) #array of phenotypes
-na0, nb0 = np.array([2,4,9,16,19,19,16,9,4,2]), np.array([2,4,9,16,19,19,16,9,4,2])  #array of frequencies (uniform)
+
+pu0, pl0 = pa0 + 0.5, pa0 - 0.5
+prb = ss.norm(5.5,1.5).cdf(pu0) - ss.norm(5.5,1.5).cdf(pl0)
+prb = prb / sum(prb)
 
 x, y =  np.meshgrid(pa0, pb0) #pre-interaction matrices of phenotypes
 
@@ -36,4 +40,4 @@ def f(x,y):
            'dws':np.power(x-y,2),
            'sws':np.power(x+y,2)}
     
-    return rgb['lin']
+    return rgb['sws']
