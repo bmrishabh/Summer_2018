@@ -7,7 +7,6 @@
 
 import numpy as np
 from numba import jit
-from scipy import stats as ss
 
 maxgen = 200 #number of generations
 maxpop = 100 #number of individuals

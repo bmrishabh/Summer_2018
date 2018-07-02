@@ -29,8 +29,10 @@ def muan(p):
 def norm(p):
 
     '''Normalizes the given array.'''
-
-    return (p / np.sum(p))
+    if np.sum(p) != 0:
+        return (p / np.sum(p))
+    else:
+        return p
 
 @jit
 def shan(p):
@@ -59,8 +61,8 @@ def efec(paj, pbj, a, b):
 
     x, y =  np.meshgrid(paj, pbj)
 
-    efa = ( a*np.average(f(x,y), axis=0) + b*np.average(f(y,x), axis=1) ).clip(0)
-    efb = ( a*np.average(f(y,x), axis=1) + b*np.average(f(x,y), axis=0) ).clip(0)
+    efa = ( np.average(a*f(x,y)+b*f(y,x), axis=0) ).clip(0)
+    efb = ( np.average(a*f(y,x)+b*f(x,y), axis=1) ).clip(0)
 
     return efa, efb
 
@@ -81,8 +83,7 @@ def gaug(paj, pbj, a, b):
 
     '''Calculates required population properties.'''
 
-    efa, efb = efec(paj, pbj, a, b)    
-    
+    efa, efb = efec(paj, pbj, a, b)
     eopa, eopb = np.average(paj), np.average(paj)
     eofa, eofb = np.average(efa), np.average(efb)
     sopa, sopb = shan(paj), shan(pbj)
@@ -136,28 +137,31 @@ def prof(cmy, a, b):
     and fixation time vs parameter b figures.'''
 
     x, y = np.meshgrid(phen, phen)
+    fec0 = np.average(a*f(x,y), axis=0)
+    fecp = np.average(a*f(x,y) + b*f(y,x), axis=0)
+    fecn = np.average(a*f(x,y) - b*f(y,x), axis=0).clip(0)
     
     plt.figure(figsize=(32,18))
     
     plt.subplot(221)
-    plt.plot(phen, np.average(f(x,y), axis=0), label='Intrinsic')
+    plt.plot(phen, fec0, label='Intrinsic')
     plt.xlabel('Phenotypes')
     plt.ylabel('Intrinsic Fecundity')
     plt.legend()
     plt.tight_layout()
     
     plt.subplot(223)
-    plt.plot(phen, + b*np.average(f(y,x), axis=1), label='+ve b')
-    plt.plot(phen, - b*np.average(f(y,x), axis=1), label='-ve b')
+    plt.plot(phen, fecp - fec0, label='+ve b')
+    plt.plot(phen, fecn - fec0, label='-ve b')
     plt.xlabel('Phenotypes')
     plt.ylabel('Interaction Fecundity')
     plt.legend()
     plt.tight_layout()
     
     plt.subplot(222)
-    plt.plot(phen, a*np.average(f(x,y), axis=0) + b*np.average(f(y,x), axis=1), label='+ve b')
-    plt.plot(phen, a*np.average(f(x,y), axis=0), label='nil b')
-    plt.plot(phen, a*np.average(f(x,y), axis=0) - b*np.average(f(y,x), axis=1), label='-ve b')
+    plt.plot(phen, fecp, label='+ve b')
+    plt.plot(phen, fec0, label='nil b')
+    plt.plot(phen, fecn, label='-ve b')
     plt.xlabel('Phenotypes')
     plt.ylabel('Composite Fecundity')
     plt.legend()

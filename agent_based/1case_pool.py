@@ -20,8 +20,8 @@ def sims(i):
     df=np.array([])
     ft=np.array([])
     
-    pa0 = np.repeat(phen, np.random.multinomial(maxgen, prob))
-    pb0 = np.repeat(phen, np.random.multinomial(maxgen, prob))
+    pa0 = np.repeat(phen, np.random.multinomial(maxpop, prob))
+    pb0 = np.repeat(phen, np.random.multinomial(maxpop, prob))
             
     paj, pbj = pa0, pb0
     df = np.array([gaug(paj, pbj, a, b)])
